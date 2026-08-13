@@ -1,0 +1,13 @@
+{
+  "addons": {
+    "item-key-column@rvella": {
+      "updates": [
+        {
+          "version": "1.1.1",
+          "update_link": "https://github.com/liuchzzyy/Zotero-Item-Key-Column/releases/download/v1.1.1/item-key-column-1.1.1.xpi",
+          "update_hash": "sha256:014c930916873df91bcfecd3d39126dee85e572fc2bd76c9fa53ae25127bc577"
+        }
+      ]
+    }
+  }
+}
