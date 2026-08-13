@@ -74,8 +74,7 @@ with zipfile.ZipFile('item-key-column.xpi', 'w', zipfile.ZIP_DEFLATED) as z:
 
 ## 版本历史
 
-- **1.1.1** — 加固 Short Note 存储（多行规范化、空 extra 处理）；`saveTx` 容错；`update_url` 指向 GitHub
-- **1.1.0** — 新增「简记 / Short Note」列与可编辑 Info 行
+- **1.1.0** — 新增「简记 / Short Note」列与可编辑 Info 行；加固存储（多行规范化、空 extra 处理）；`saveTx` 容错；`update_url` 指向 GitHub
 - **1.0.5** — Info 行标签增加文本后备，解决 FTL 未生效时标签空白
 - **1.0.4** — 新增简体中文支持
 - **1.0.3** — Info 行注册移至 `startup()`，安装后无需重启即可显示
