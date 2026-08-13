@@ -12,9 +12,7 @@ async function registerColumn() {
     label: "Item Key",
     pluginID: PLUGIN_ID,
     dataProvider: (item) => item?.key || "",
-    sortable: true,
-    tooltip: (item) => item?.key || "",
-    defaultInColumnsPicker: true
+    showInColumnPicker: true
   });
 }
 async function unregisterColumn() {
