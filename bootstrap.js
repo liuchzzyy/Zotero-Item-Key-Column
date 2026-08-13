@@ -34,7 +34,13 @@ function registerInfoRow() {
   infoRowID = Zotero.ItemPaneManager.registerInfoRow({
     rowID: "rvella-item-key-row",
     pluginID: PLUGIN_ID,
-    label: { l10nID: "rvella-item-key-label" }, 
+    label: {
+      l10nID: "rvella-item-key-label",
+      // Fallback text: Zotero renders `text` first, then overrides it via the
+      // data-l10n-id if the plugin FTL is resolvable. Providing both guarantees
+      // the label shows up even if FTL resolution fails.
+      text: getItemKeyLabel(),
+    },
     position: "afterCreators",
     multiline: false,
     nowrap: true,
