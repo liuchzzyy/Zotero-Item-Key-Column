@@ -62,7 +62,12 @@ function onMainWindowUnload({ window }) {
 
 // ── Lifecycle ──
 async function startup() {
-  await registerColumn(); 
+  await registerColumn();
+  // Also try to register the Info row here, so it appears without requiring a
+  // Zotero restart (onMainWindowLoad only fires for newly opened windows).
+  // registerInfoRow() is a no-op if already registered or the API is not ready;
+  // onMainWindowLoad() serves as the fallback.
+  registerInfoRow();
 }
 async function shutdown() {
   await unregisterColumn();
