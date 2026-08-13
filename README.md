@@ -42,7 +42,20 @@
 在仓库根目录打包 xpi：
 
 ```bash
+# 方式一：zip 命令（Linux / macOS / Git Bash 自带 zip 时）
 zip -r item-key-column.xpi manifest.json bootstrap.js locale
+
+# 方式二：python3（跨平台，Windows 无 zip 命令时）
+python3 -c "
+import zipfile
+files = ['manifest.json', 'bootstrap.js',
+         'locale/en-US/item-key-column.ftl',
+         'locale/en-GB/item-key-column.ftl',
+         'locale/zh-CN/item-key-column.ftl']
+with zipfile.ZipFile('item-key-column.xpi', 'w', zipfile.ZIP_DEFLATED) as z:
+    for f in files:
+        z.write(f, f)
+"
 ```
 
 ### 发布新版本
