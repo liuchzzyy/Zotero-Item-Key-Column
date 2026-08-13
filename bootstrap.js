@@ -6,10 +6,15 @@ let infoRowID = null;
 let infoRowRegistered = false; 
 
 // ── Items list column ──
+function getItemKeyLabel() {
+  // Column labels are resolved via Zotero.getString(), which does not load
+  // plugin FTL strings, so pick the localized string here instead.
+  return Zotero.locale.startsWith("zh") ? "条目 ID" : "Item Key";
+}
 async function registerColumn() {
   registeredDataKey = await Zotero.ItemTreeManager.registerColumn({
     dataKey: "itemKeyColumn",
-    label: "Item Key",
+    label: getItemKeyLabel(),
     pluginID: PLUGIN_ID,
     dataProvider: (item) => item?.key || "",
     showInColumnPicker: true
