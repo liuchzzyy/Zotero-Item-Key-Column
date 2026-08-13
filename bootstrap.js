@@ -40,8 +40,13 @@ function getShortNote(item) {
 
 function setShortNote(item, value) {
   let extra = item.getField("extra") || "";
+  // Normalize the value to a single line so it can't corrupt the extra
+  // key-value structure (a "Short Note: ..." line must stay on one line).
+  value = (value || "").replace(/\r?\n/g, " ").trim();
   let prefix = SHORT_NOTE_EXTRA_KEY + ":";
-  let lines = extra.split(/\r?\n/);
+  // Avoid producing a leading blank line when extra is empty:
+  // "".split(/\r?\n/) returns [""].
+  let lines = extra ? extra.split(/\r?\n/) : [];
   let found = false;
   let newLines = [];
   for (let line of lines) {
@@ -127,7 +132,7 @@ function registerInfoRows() {
       },
       onSetData({ item, value }) {
         setShortNote(item, value || "");
-        item.saveTx();
+        item.saveTx().catch((e) => Zotero.logError(e));
       }
     })
   ];
