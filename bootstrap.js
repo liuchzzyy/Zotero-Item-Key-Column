@@ -10,7 +10,7 @@ const ITEM_KEY_ROW = "rvella-item-key-row";
 // plugin FTL strings, so we carry the localized text here too.
 const EXTRA_FIELDS = [
   {
-    extraKey: "Short Note",
+    extraKey: "short-note",
     column: "shortNoteColumn",
     row: "rvella-short-note-row",
     l10n: "rvella-short-note-label",
@@ -18,7 +18,7 @@ const EXTRA_FIELDS = [
     en: "Short Note",
   },
   {
-    extraKey: "Translated Title",
+    extraKey: "translated-title",
     column: "translatedTitleColumn",
     row: "rvella-translated-title-row",
     l10n: "rvella-translated-title-label",

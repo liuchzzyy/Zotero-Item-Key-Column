@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Item Key Visible",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Adds 'Item Key', editable 'Short Note', and editable 'Translated Title' columns and Info-pane rows to Zotero.",
   "applications": {
     "zotero": {
