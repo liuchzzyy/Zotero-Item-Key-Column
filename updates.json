@@ -3,6 +3,11 @@
     "item-key-column@rvella": {
       "updates": [
         {
+          "version": "1.1.1",
+          "update_link": "https://github.com/liuchzzyy/Zotero-Item-Key-Column/releases/download/v1.1.1/item-key-column-1.1.1.xpi",
+          "update_hash": "sha256:3cf7d40486725f8e1756fa9cd22a86b98cec771dc35c71f4e9c77a6f81740c35"
+        },
+        {
           "version": "1.1.0",
           "update_link": "https://github.com/liuchzzyy/Zotero-Item-Key-Column/releases/download/v1.1.0/item-key-column-1.1.0.xpi",
           "update_hash": "sha256:47b485781e62d1aeb5589109a5379c71946b2c3118820fbe0a9cd958c04e5169"
