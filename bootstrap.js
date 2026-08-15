@@ -2,37 +2,43 @@
 const PLUGIN_ID = "item-key-column@rvella";
 
 const ITEM_KEY_COLUMN = "itemKeyColumn";
-const SHORT_NOTE_COLUMN = "shortNoteColumn";
-const TRANSLATED_TITLE_COLUMN = "translatedTitleColumn";
 const ITEM_KEY_ROW = "rvella-item-key-row";
-const SHORT_NOTE_ROW = "rvella-short-note-row";
-const TRANSLATED_TITLE_ROW = "rvella-translated-title-row";
-const SHORT_NOTE_EXTRA_KEY = "Short Note";
-const TRANSLATED_TITLE_EXTRA_KEY = "Translated Title";
+
+// One entry per editable extra-field. `extraKey` is the `extra`-field line
+// prefix; the rest are the column/Info-row identifiers and the bilingual label
+// fallback. Column labels resolve via Zotero.getString(), which does not load
+// plugin FTL strings, so we carry the localized text here too.
+const EXTRA_FIELDS = [
+  {
+    extraKey: "Short Note",
+    column: "shortNoteColumn",
+    row: "rvella-short-note-row",
+    l10n: "rvella-short-note-label",
+    zh: "简记",
+    en: "Short Note",
+  },
+  {
+    extraKey: "Translated Title",
+    column: "translatedTitleColumn",
+    row: "rvella-translated-title-row",
+    l10n: "rvella-translated-title-label",
+    zh: "翻译标题",
+    en: "Translated Title",
+  },
+];
 
 let registeredDataKeys = [];
 let infoRowIDs = [];
 let infoRowsRegistered = false;
 
-// ── Localization helpers ──
-// Column labels are resolved via Zotero.getString(), which does not load
-// plugin FTL strings, so pick the localized string here instead.
+// ── Localization ──
 function localized(zh, en) {
   return Zotero.locale.startsWith("zh") ? zh : en;
 }
-function getItemKeyLabel() {
-  return localized("条目 ID", "Item Key");
-}
-function getShortNoteLabel() {
-  return localized("简记", "Short Note");
-}
-function getTranslatedTitleLabel() {
-  return localized("翻译标题", "Translated Title");
-}
 
 // ── Extra-field persistence ──
-// Stored as a "Short Note: ..." / "Translated Title: ..." line inside the
-// item's `extra` field, so the value syncs with Zotero like any other field.
+// Stored as an "ExtraKey: ..." line inside the item's `extra` field, so the
+// value syncs with Zotero like any other field.
 function getExtraLine(item, extraKey) {
   let extra = item?.getField?.("extra") || "";
   let prefix = extraKey + ":";
@@ -57,7 +63,7 @@ function setExtraLine(item, extraKey, value) {
   let newLines = [];
   for (let line of lines) {
     if (line.startsWith(prefix)) {
-      // Replace the first matching line, drop any duplicates
+      // Replace the first matching line, drop any duplicates.
       if (!found && value) {
         newLines.push(extraKey + ": " + value);
       }
@@ -73,44 +79,28 @@ function setExtraLine(item, extraKey, value) {
   item.setField("extra", newLines.join("\n"));
 }
 
-function getShortNote(item) {
-  return getExtraLine(item, SHORT_NOTE_EXTRA_KEY);
-}
-function setShortNote(item, value) {
-  setExtraLine(item, SHORT_NOTE_EXTRA_KEY, value);
-}
-function getTranslatedTitle(item) {
-  return getExtraLine(item, TRANSLATED_TITLE_EXTRA_KEY);
-}
-function setTranslatedTitle(item, value) {
-  setExtraLine(item, TRANSLATED_TITLE_EXTRA_KEY, value);
-}
-
 // ── Items list columns ──
 async function registerColumns() {
   let itemKeyKey = await Zotero.ItemTreeManager.registerColumn({
     dataKey: ITEM_KEY_COLUMN,
-    label: getItemKeyLabel(),
+    label: localized("条目 ID", "Item Key"),
     pluginID: PLUGIN_ID,
     dataProvider: (item) => item?.key || "",
     showInColumnPicker: true
   });
-  let shortNoteKey = await Zotero.ItemTreeManager.registerColumn({
-    dataKey: SHORT_NOTE_COLUMN,
-    label: getShortNoteLabel(),
-    pluginID: PLUGIN_ID,
-    dataProvider: (item) => getShortNote(item),
-    showInColumnPicker: true
-  });
-  let translatedTitleKey = await Zotero.ItemTreeManager.registerColumn({
-    dataKey: TRANSLATED_TITLE_COLUMN,
-    label: getTranslatedTitleLabel(),
-    pluginID: PLUGIN_ID,
-    dataProvider: (item) => getTranslatedTitle(item),
-    showInColumnPicker: true
-  });
-  registeredDataKeys = [itemKeyKey, shortNoteKey, translatedTitleKey];
+  let extraKeys = [];
+  for (let field of EXTRA_FIELDS) {
+    extraKeys.push(await Zotero.ItemTreeManager.registerColumn({
+      dataKey: field.column,
+      label: localized(field.zh, field.en),
+      pluginID: PLUGIN_ID,
+      dataProvider: (item) => getExtraLine(item, field.extraKey),
+      showInColumnPicker: true
+    }));
+  }
+  registeredDataKeys = [itemKeyKey, ...extraKeys];
 }
+
 async function unregisterColumns() {
   for (let key of registeredDataKeys) {
     if (key) {
@@ -132,7 +122,7 @@ function registerInfoRows() {
         l10nID: "rvella-item-key-label",
         // Fallback text: Zotero renders `text` first, then overrides it via the
         // data-l10n-id if the plugin FTL is resolvable.
-        text: getItemKeyLabel(),
+        text: localized("条目 ID", "Item Key"),
       },
       position: "afterCreators",
       multiline: false,
@@ -142,44 +132,25 @@ function registerInfoRows() {
         return item?.key || "";
       }
     }),
-    Zotero.ItemPaneManager.registerInfoRow({
-      rowID: SHORT_NOTE_ROW,
+    ...EXTRA_FIELDS.map((field) => Zotero.ItemPaneManager.registerInfoRow({
+      rowID: field.row,
       pluginID: PLUGIN_ID,
       label: {
-        l10nID: "rvella-short-note-label",
-        text: getShortNoteLabel(),
+        l10nID: field.l10n,
+        text: localized(field.zh, field.en),
       },
       position: "afterCreators",
       multiline: true,
       nowrap: false,
       editable: true,
       onGetData({ item }) {
-        return getShortNote(item);
+        return getExtraLine(item, field.extraKey);
       },
       onSetData({ item, value }) {
-        setShortNote(item, value || "");
+        setExtraLine(item, field.extraKey, value || "");
         item.saveTx().catch((e) => Zotero.logError(e));
       }
-    }),
-    Zotero.ItemPaneManager.registerInfoRow({
-      rowID: TRANSLATED_TITLE_ROW,
-      pluginID: PLUGIN_ID,
-      label: {
-        l10nID: "rvella-translated-title-label",
-        text: getTranslatedTitleLabel(),
-      },
-      position: "afterCreators",
-      multiline: true,
-      nowrap: false,
-      editable: true,
-      onGetData({ item }) {
-        return getTranslatedTitle(item);
-      },
-      onSetData({ item, value }) {
-        setTranslatedTitle(item, value || "");
-        item.saveTx().catch((e) => Zotero.logError(e));
-      }
-    })
+    }))
   ];
 
   infoRowsRegistered = true;
