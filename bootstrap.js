@@ -10,20 +10,20 @@ const ITEM_KEY_ROW = "rvella-item-key-row";
 // plugin FTL strings, so we carry the localized text here too.
 const EXTRA_FIELDS = [
   {
-    extraKey: "short-note",
-    column: "shortNoteColumn",
-    row: "rvella-short-note-row",
-    l10n: "rvella-short-note-label",
-    zh: "简记",
-    en: "Short Note",
-  },
-  {
     extraKey: "translated-title",
     column: "translatedTitleColumn",
     row: "rvella-translated-title-row",
     l10n: "rvella-translated-title-label",
     zh: "翻译标题",
     en: "Translated Title",
+  },
+  {
+    extraKey: "short-note",
+    column: "shortNoteColumn",
+    row: "rvella-short-note-row",
+    l10n: "rvella-short-note-label",
+    zh: "简记",
+    en: "Short Note",
   },
 ];
 
@@ -124,7 +124,7 @@ function registerInfoRows() {
         // data-l10n-id if the plugin FTL is resolvable.
         text: localized("条目 ID", "Item Key"),
       },
-      position: "afterCreators",
+      position: "start",
       multiline: false,
       nowrap: true,
       editable: false,
@@ -139,7 +139,7 @@ function registerInfoRows() {
         l10nID: field.l10n,
         text: localized(field.zh, field.en),
       },
-      position: "afterCreators",
+      position: "start",
       multiline: true,
       nowrap: false,
       editable: true,
